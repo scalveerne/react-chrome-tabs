@@ -5,6 +5,9 @@
 
 ## Usage
 
+> yarn add @sinm/react-chrome-tabs
+
+
 ```ts
 import React, { useEffect } from "react";
 import { useState } from "react";
