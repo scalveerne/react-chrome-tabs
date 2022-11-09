@@ -3,12 +3,30 @@
 ![](./react-chrome-tabs.gif)
 
 
-## Usage
+## Installation
 
 > yarn add @sinm/react-chrome-tabs
+## Usage
 
+```tsx
+import { Tabs, TabProperties } from "@sinm/react-chrome-tabs";
+import '@sinm/react-chrome-tabs/css/chrome-tabs.css';
 
-```ts
+const [tabs, setTabs] = useState<TabProperties[]>([
+  { id: "abc", favicon: fb, title: "测试", active: true },
+]);
+
+<Tabs
+  onTabClose={close}
+  onTabReorder={reorder}
+  onTabActive={active}
+  tabs={tabs}
+/>
+```
+
+## Example
+
+```tsx
 import React, { useEffect } from "react";
 import { useState } from "react";
 import { Tabs, TabProperties } from "@sinm/react-chrome-tabs";
@@ -69,6 +87,12 @@ function App() {
 }
 ```
 
+More Examples see
+
+- [Demo Code](./demo/index.tsx)
+- [ONote Tabs](https://github.com/pansinm/ONote/blob/master/packages/renderer/src/main/containers/ResourceTabs/index.tsx)
+
+
 ## Tabs Props
 
 | name          | type          | description                     |
@@ -87,8 +111,3 @@ cd react-chrome-tabs
 yarn dev
 # visit http://localhost:8080/
 ```
-
-## Examples
-
-[Demo Code](./demo/index.tsx)
-[ONote Tabs](https://github.com/pansinm/ONote/blob/master/packages/renderer/src/main/containers/ResourceTabs/index.tsx)
