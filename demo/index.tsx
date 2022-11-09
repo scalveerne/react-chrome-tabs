@@ -8,22 +8,19 @@ import "../css/chrome-tabs.css";
 import fb from "./images/facebook-favicon.ico";
 import google from "./images/google-favicon.ico";
 
-let id = 1;
+let id = 0;
 function App() {
   const [tabs, setTabs] = useState<TabProperties[]>([
     { id: "abc", favicon: fb, title: "测试", active: true },
   ]);
 
-  useEffect(() => {
-    console.log(tabs);
-  });
-
   const addTab = () => {
+    id++;
     setTabs([
       ...tabs,
       {
-        id: Math.random().toString(36).slice(2),
-        title: `New Tabs ${id++}`,
+        id: `tab-id-${id}`,
+        title: `New Tabs ${id}`,
         favicon: tabs.length % 2 ? fb : google,
       },
     ]);
@@ -46,7 +43,9 @@ function App() {
     newTabs.splice(toIndex, 0, beforeTab);
     setTabs(newTabs);
   };
+
   const closeAll = () => setTabs([]);
+  
   return (
     <div>
       <Tabs

@@ -6,22 +6,76 @@
 ## Usage
 
 ```ts
-import { Tabs } from '@sinm/react-chrome-tabs';
+import React, { useEffect } from "react";
+import { useState } from "react";
+import { Tabs, TabProperties } from "@sinm/react-chrome-tabs";
+import '@sinm/react-chrome-tabs/css/chrome-tabs.css';
 
-const tabs = useState([{ id: "abc", title: "测试", active: true }])
+import fb from "./images/facebook-favicon.ico";
+import google from "./images/google-favicon.ico";
 
-const active = () => {
+let id = 1;
 
+function App() {
+  const [tabs, setTabs] = useState<TabProperties[]>([
+    { id: "abc", favicon: fb, title: "测试", active: true },
+  ]);
+
+  const addTab = () => {
+    id++;
+    setTabs([
+      ...tabs,
+      {
+        id: `tab-id-${id}`,
+        title: `New Tabs ${id}`,
+        favicon: tabs.length % 2 ? fb : google,
+      },
+    ]);
+  };
+
+  const active = (id: string) => {
+    setTabs(tabs.map((tab) => ({ ...tab, active: id === tab.id })));
+  };
+
+  const close = (id: string) => {
+    setTabs(tabs.filter((tab) => tab.id !== id));
+  };
+
+  const reorder = (tabId: string, fromIndex: number, toIndex: number) => {
+    const beforeTab = tabs.find(tab => tab.id === tabId);
+    if (!beforeTab) {
+        return;
+    }
+    let newTabs = tabs.filter(tab => tab.id !== tabId);
+    newTabs.splice(toIndex, 0, beforeTab);
+    setTabs(newTabs);
+  };
+  const closeAll = () => setTabs([]);
+  return (
+    <div>
+      <Tabs
+        onTabClose={close}
+        onTabReorder={reorder}
+        onTabActive={active}
+        tabs={tabs}
+      ></Tabs>
+      <button onClick={addTab}>Add Tab</button>
+      <button onClick={closeAll}>Close All</button>
+    </div>
+  );
 }
-
-<Tabs
-  onTabActivated={active}
-  onTabReorder={reorder}
-  onTabClosed={remove}
-  onContextMenu={handleContextMenu}
-  tabs={tabs}
-></Tabs>
 ```
+
+## Tabs Props
+
+| name          | type          | description                     |
+| ------------- | ------------- | ------------------------------- |
+| tabs          | TabProperties | tabs to render                |
+| onTabActive   | Function      | when tab active                 |
+| onTabClose    | Function      | when tab close                  |
+| onTabReorder  | Function      | when tab drag to reorder        |
+| onContextMenu | Function      | when trigger context menu event |
+
 
 ## Run Demo
 ```bash
