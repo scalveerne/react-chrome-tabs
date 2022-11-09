@@ -9,8 +9,8 @@ export type TabsProps = Listeners & {
 
 export function Tabs({
   tabs,
-  onTabActivated,
-  onTabClosed,
+  onTabActive: onTabActive,
+  onTabClose: onTabClose,
   onTabReorder,
   onContextMenu,
 }: TabsProps) {
@@ -41,8 +41,8 @@ export function Tabs({
 
   const { ChromeTabs, addTab, activeTab, removeTab, updateTab } = useChromeTabs(
     {
-      onTabClosed,
-      onTabActivated,
+      onTabClose: onTabClose,
+      onTabActive: onTabActive,
       onContextMenu,
       onDragEnd: handleDragEnd,
       onTabReorder: handleTabReorder,

@@ -49,8 +49,9 @@ const defaultTapProperties = {
   favicon: false,
 };
 
-export type TabProperties = typeof defaultTapProperties & {
+export interface TabProperties  {
   id: string;
+  title: string,
   active?: boolean;
   favicon?: boolean | string;
 };
@@ -272,13 +273,13 @@ class ChromeTabs {
   }
 
   removeTab(tabEl: HTMLElement) {
-    // if (tabEl === this.activeTabEl) {
-    //   if (tabEl.nextElementSibling) {
-    //     this.setCurrentTab(tabEl.nextElementSibling as HTMLElement);
-    //   } else if (tabEl.previousElementSibling) {
-    //     this.setCurrentTab(tabEl.previousElementSibling as HTMLElement);
-    //   }
-    // }
+    if (tabEl === this.activeTabEl) {
+      if (tabEl.nextElementSibling) {
+        this.setCurrentTab(tabEl.nextElementSibling as HTMLElement);
+      } else if (tabEl.previousElementSibling) {
+        this.setCurrentTab(tabEl.previousElementSibling as HTMLElement);
+      }
+    }
     tabEl.parentNode!.removeChild(tabEl);
     this.emit("tabRemove", { tabEl });
     this.cleanUpPreviouslyDraggedTabs();

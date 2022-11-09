@@ -9,8 +9,8 @@ import React, {
 import ChromeTabsClz, { TabProperties } from "./chrome-tabs";
 
 export type Listeners = {
-  onTabActivated?: (tabId: string) => void;
-  onTabClosed?: (tabId: string) => void;
+  onTabActive?: (tabId: string) => void;
+  onTabClose?: (tabId: string) => void;
   onTabReorder?: (tabId: string, fromIdex: number, toIndex: number) => void;
   onDragBegin?: () => void;
   onDragEnd?: () => void;
@@ -44,14 +44,14 @@ export function useChromeTabs(listeners: Listeners) {
     const listener = ({ detail }: any) => {
       const tabEle = detail.tabEl as HTMLDivElement;
       const tabId = tabEle.getAttribute("data-tab-id") as string;
-      listeners.onTabActivated?.(tabId);
+      listeners.onTabActive?.(tabId);
     };
     const ele = chromeTabsRef.current?.el;
     ele?.addEventListener("tabClick", listener);
     return () => {
       ele?.removeEventListener("tabClick", listener);
     };
-  }, [listeners.onTabActivated]);
+  }, [listeners.onTabActive]);
 
   useEffect(() => {
     const ele = chromeTabsRef.current?.el;
@@ -71,13 +71,13 @@ export function useChromeTabs(listeners: Listeners) {
     const listener = ({ detail }: any) => {
       const tabEle = detail.tabEl as HTMLDivElement;
       const tabId = tabEle.getAttribute("data-tab-id") as string;
-      listeners.onTabClosed?.(tabId);
+      listeners.onTabClose?.(tabId);
     };
     ele?.addEventListener("tabClose", listener);
     return () => {
       ele?.removeEventListener("tabClose", listener);
     };
-  }, [listeners.onTabClosed]);
+  }, [listeners.onTabClose]);
 
   useEffect(() => {
     const listener = () => {
@@ -94,6 +94,9 @@ export function useChromeTabs(listeners: Listeners) {
     const ele = chromeTabsRef.current?.el;
     const listener = ({ detail }: any) => {
       const tabEle = detail.tabEl as HTMLDivElement;
+      if (!tabEle) {
+        return;
+      }
       const tabId = tabEle.getAttribute("data-tab-id") as string;
       listeners.onContextMenu?.(tabId, detail.event);
     };
