@@ -1,6 +1,6 @@
 {
   "name": "@sinm/react-chrome-tabs",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "Chrome-style tabs in HTML/CSS/JS",
   "main": "dist/index.js",
   "files": [
