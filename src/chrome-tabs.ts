@@ -49,12 +49,13 @@ const defaultTapProperties = {
   favicon: false,
 };
 
-export interface TabProperties  {
+export interface TabProperties {
   id: string;
-  title: string,
+  title: string;
   active?: boolean;
   favicon?: boolean | string;
-};
+  faviconClass?: string;
+}
 
 let instanceId = 0;
 
@@ -291,8 +292,14 @@ class ChromeTabs {
     tabEl.querySelector(".chrome-tab-title")!.textContent = tabProperties.title;
 
     const faviconEl = tabEl.querySelector(".chrome-tab-favicon") as HTMLElement;
-    if (tabProperties.favicon) {
-      faviconEl!.style!.backgroundImage = `url('${tabProperties.favicon}')`;
+    const { favicon, faviconClass } = tabProperties;
+    if (favicon || faviconClass) {
+      if (faviconClass) {
+        faviconEl.classList.add(faviconClass);
+      }
+      if (favicon) {
+        faviconEl!.style!.backgroundImage = `url('${favicon}')`;
+      }
       faviconEl?.removeAttribute("hidden");
     } else {
       faviconEl?.setAttribute("hidden", "");

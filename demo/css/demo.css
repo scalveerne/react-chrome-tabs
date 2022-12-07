@@ -122,8 +122,10 @@ html.dark-theme button:focus {
   box-shadow: 0 0 0 3px #4a4d51;
 }
 
-
-
+.emoji::before {
+  content: '😘';
+  color: burlywood;
+}
 
 /* Carbon Ads */
 

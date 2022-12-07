@@ -124,6 +124,9 @@
 }
 .chrome-tabs .chrome-tab .chrome-tab-favicon {
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
   flex-grow: 0;
   height: 16px;

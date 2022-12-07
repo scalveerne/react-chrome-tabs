@@ -51,7 +51,7 @@
   },
   "scripts": {
     "prepublishOnly": "tsc",
-    "dev": "webpack serve"
+    "start": "webpack serve"
   },
   "publishConfig": {
     "access": "public"

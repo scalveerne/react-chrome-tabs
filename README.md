@@ -93,7 +93,7 @@ More Examples see
 - [ONote Tabs](https://github.com/pansinm/ONote/blob/master/packages/renderer/src/main/containers/ResourceTabs/index.tsx)
 
 
-## Tabs Props
+## Component Props
 
 | name          | type          | description                     |
 | ------------- | ------------- | ------------------------------- |
@@ -103,11 +103,23 @@ More Examples see
 | onTabReorder  | Function      | when tab drag to reorder        |
 | onContextMenu | Function      | when trigger context menu event |
 
+## TabProperties
+```ts
+export interface TabProperties {
+  id: string;
+  title: string;
+  active?: boolean;
+  // favicon background image
+  favicon?: boolean | string;
+  // favicon class
+  faviconClass?: string;
+}
+```
 
 ## Run Demo
 ```bash
 git clone https://github.com/pansinm/react-chrome-tabs.git
 cd react-chrome-tabs
-yarn dev
+yarn start
 # visit http://localhost:8080/
 ```

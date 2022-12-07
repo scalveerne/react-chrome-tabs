@@ -4,6 +4,7 @@ import { render } from "react-dom";
 import { Tabs } from "../src";
 import { TabProperties } from "../src/chrome-tabs";
 import "../css/chrome-tabs.css";
+import './css/demo.css'
 
 import fb from "./images/facebook-favicon.ico";
 import google from "./images/google-favicon.ico";
@@ -14,7 +15,7 @@ function App() {
     { id: "abc", favicon: fb, title: "测试", active: true },
   ]);
 
-  const addTab = () => {
+  const addTabWithIcon = () => {
     id++;
     setTabs([
       ...tabs,
@@ -24,7 +25,20 @@ function App() {
         favicon: tabs.length % 2 ? fb : google,
       },
     ]);
-  };
+  }
+
+  const addTabWithIconClass = () => {
+    id++;
+    setTabs([
+      ...tabs,
+      {
+        id: `tab-id-${id}`,
+        title: `New Tabs ${id}`,
+        faviconClass: 'emoji'
+      },
+    ]);
+  }
+
 
   const active = (id: string) => {
     setTabs(tabs.map((tab) => ({ ...tab, active: id === tab.id })));
@@ -54,7 +68,8 @@ function App() {
         onTabActive={active}
         tabs={tabs}
       ></Tabs>
-      <button onClick={addTab}>Add Tab</button>
+      <button onClick={addTabWithIcon}>Add Tab with icon</button>
+      <button onClick={addTabWithIconClass}>Add Tab with iconClass</button>
       <button onClick={closeAll}>Close All</button>
     </div>
   );
