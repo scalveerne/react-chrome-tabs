@@ -297,7 +297,7 @@ class ChromeTabs {
     faviconEl!.style!.backgroundImage = "";
     if (favicon || faviconClass) {
       if (faviconClass) {
-        faviconEl.classList.add(faviconClass);
+        faviconEl.className = ["chrome-tab-favicon", faviconClass].join(" ");
       }
       if (favicon) {
         faviconEl!.style!.backgroundImage = `url('${favicon}')`;

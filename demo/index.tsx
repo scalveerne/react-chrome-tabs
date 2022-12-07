@@ -34,7 +34,7 @@ function App() {
       {
         id: `tab-id-${id}`,
         title: `New Tabs ${id}`,
-        faviconClass: 'emoji'
+        faviconClass: ' emoji'
       },
     ]);
   }
