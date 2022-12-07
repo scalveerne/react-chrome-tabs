@@ -293,6 +293,8 @@ class ChromeTabs {
 
     const faviconEl = tabEl.querySelector(".chrome-tab-favicon") as HTMLElement;
     const { favicon, faviconClass } = tabProperties;
+    faviconEl.className = "chrome-tab-favicon";
+    faviconEl!.style!.backgroundImage = "";
     if (favicon || faviconClass) {
       if (faviconClass) {
         faviconEl.classList.add(faviconClass);
