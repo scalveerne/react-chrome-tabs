@@ -2,6 +2,7 @@
 
 ![](./react-chrome-tabs.gif)
 
+[codesandbox](https://codesandbox.io/embed/eager-galois-hq8uxb?fontsize=14&hidenavigation=1&theme=dark)
 
 ## Installation
 
