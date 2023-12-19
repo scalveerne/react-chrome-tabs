@@ -32,6 +32,8 @@ import React, { useEffect } from "react";
 import { useState } from "react";
 import { Tabs, TabProperties } from "@sinm/react-chrome-tabs";
 import '@sinm/react-chrome-tabs/css/chrome-tabs.css';
+// for dark mode
+import '@sinm/react-chrome-tabs/css/chrome-tabs-dark-theme.css';
 
 import fb from "./images/facebook-favicon.ico";
 import google from "./images/google-favicon.ico";
@@ -76,6 +78,7 @@ function App() {
   return (
     <div>
       <Tabs
+        darkMode={false}
         onTabClose={close}
         onTabReorder={reorder}
         onTabActive={active}
@@ -98,7 +101,9 @@ More Examples see
 
 | name          | type          | description                     |
 | ------------- | ------------- | ------------------------------- |
-| tabs          | TabProperties | tabs to render                |
+| darkMode      | boolean       | dark mode                       |
+| className     | string        | class name for tabs container   |
+| tabs          | TabProperties | tabs to render                  |
 | onTabActive   | Function      | when tab active                 |
 | onTabClose    | Function      | when tab close                  |
 | onTabReorder  | Function      | when tab drag to reorder        |
