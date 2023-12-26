@@ -66,6 +66,8 @@ class ChromeTabs {
   draggabillies: Draggabilly[];
   isDragging: any;
   draggabillyDragging: any;
+  isMouseEnter: boolean = false;
+  mouseEnterLayoutResolve: null | (() => void) = null
 
   constructor() {
     this.draggabillies = [];
@@ -102,17 +104,33 @@ class ChromeTabs {
   }
 
   setupEvents() {
-    window.addEventListener("resize", (_) => {
-      this.cleanUpPreviouslyDraggedTabs();
-      this.layoutTabs();
-    });
+    window.addEventListener("resize", this.onResize);
 
     // this.el.addEventListener("dblclick", (event) => {
     //   if ([this.el, this.tabContentEl].includes(event.target as HTMLElement))
     //     this.addTab();
     // });
 
+    this.el.addEventListener('mouseenter', () => {
+      this.isMouseEnter = true;
+    });
+
+    this.el.addEventListener('mouseleave', this.onMouseLeave);
+    // When the page visibility status changes, it is triggered immediately
+    document.addEventListener('visibilitychange', this.onMouseLeave);
+
     this.tabEls.forEach((tabEl) => this.setTabCloseEventListener(tabEl));
+  }
+  onResize = () => {
+    this.cleanUpPreviouslyDraggedTabs();
+    this.layoutTabs();
+  }
+  onMouseLeave = () => {
+    this.isMouseEnter = false;
+    if (this.mouseEnterLayoutResolve) {
+      this.mouseEnterLayoutResolve();
+      this.mouseEnterLayoutResolve = null;
+    }
   }
 
   get tabEls() {
@@ -187,7 +205,6 @@ class ChromeTabs {
 
   layoutTabs() {
     const tabContentWidths = this.tabContentWidths;
-
     this.tabEls.forEach((tabEl, i) => {
       const contentWidth = tabContentWidths[i];
       const width = contentWidth + 2 * TAB_CONTENT_MARGIN;
@@ -284,7 +301,15 @@ class ChromeTabs {
     tabEl.parentNode!.removeChild(tabEl);
     this.emit("tabRemove", { tabEl });
     this.cleanUpPreviouslyDraggedTabs();
-    this.layoutTabs();
+    if (this.isMouseEnter) {
+      if (!this.mouseEnterLayoutResolve) {
+        new Promise<void>((resolve) => {
+          this.mouseEnterLayoutResolve = resolve;
+        }).then(() => this.layoutTabs())
+      }
+    } else {
+      this.layoutTabs();
+    }
     this.setupDraggabilly();
   }
 
@@ -423,6 +448,11 @@ class ChromeTabs {
     }
     this.emit("tabReorder", { tabEl, originIndex, destinationIndex });
     this.layoutTabs();
+  }
+
+  destroy() {
+    window.removeEventListener('resize',this.onResize);
+    document.removeEventListener('visibilitychange', this.onMouseLeave)
   }
 }
 

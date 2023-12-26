@@ -27,6 +27,7 @@
   margin: 0;
   z-index: 1;
   pointer-events: none;
+  transition: width .2s, transform .2s;
 }
 .chrome-tabs .chrome-tab,
 .chrome-tabs .chrome-tab * {
@@ -104,6 +105,7 @@
 .chrome-tabs .chrome-tab.chrome-tab-was-just-added {
   top: 10px;
   animation: chrome-tab-was-just-added 120ms forwards ease-in-out;
+  transition: none;
 }
 .chrome-tabs .chrome-tab .chrome-tab-content {
   position: absolute;
