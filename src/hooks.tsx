@@ -32,6 +32,7 @@ const ChromeTabsWrapper = forwardRef<HTMLDivElement, { className?: string, darkM
       style={{ "--tab-content-margin": "9px" } as CSSProperties}
     >
       <div className="chrome-tabs-content"></div>
+      <div className="chrome-tabs-bottom-bar"></div>
     </div>
   );
 });
