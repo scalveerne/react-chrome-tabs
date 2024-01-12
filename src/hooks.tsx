@@ -44,6 +44,9 @@ export function useChromeTabs(listeners: Listeners) {
     const chromeTabs = new ChromeTabsClz();
     chromeTabsRef.current = chromeTabs;
     chromeTabs.init(ref.current as HTMLDivElement);
+    return () => {
+      chromeTabs.destroy();
+    }
   }, []);
 
   // activated
