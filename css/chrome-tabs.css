@@ -27,7 +27,7 @@
   margin: 0;
   z-index: 1;
   pointer-events: none;
-  transition: width .2s, transform .2s;
+  /* transition: width .2s, transform .2s; */
 }
 .chrome-tabs .chrome-tab,
 .chrome-tabs .chrome-tab * {
