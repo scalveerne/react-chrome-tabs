@@ -6,7 +6,8 @@ import React, {
   useMemo,
   useRef,
 } from "react";
-import ChromeTabsClz, { TabProperties } from "./chrome-tabs";
+import ChromeTabsClz, { TabProperties } from "../chrome-tabs";
+import { useLatest } from "./useLatest";
 
 export type Listeners = {
   onTabActive?: (tabId: string) => void;
@@ -40,6 +41,8 @@ const ChromeTabsWrapper = forwardRef<HTMLDivElement, { className?: string, darkM
 export function useChromeTabs(listeners: Listeners) {
   const ref = useRef<HTMLDivElement>(null);
   const chromeTabsRef = useRef<ChromeTabsClz | null>(null);
+  
+  const listenersLest = useLatest(listeners);
 
   useEffect(() => {
     const chromeTabs = new ChromeTabsClz();
@@ -55,51 +58,51 @@ export function useChromeTabs(listeners: Listeners) {
     const listener = ({ detail }: any) => {
       const tabEle = detail.tabEl as HTMLDivElement;
       const tabId = tabEle.getAttribute("data-tab-id") as string;
-      listeners.onTabActive?.(tabId);
+      listenersLest.current.onTabActive?.(tabId);
     };
     const ele = chromeTabsRef.current?.el;
     ele?.addEventListener("tabClick", listener);
     return () => {
       ele?.removeEventListener("tabClick", listener);
     };
-  }, [listeners.onTabActive]);
+  }, []);
 
   useEffect(() => {
     const ele = chromeTabsRef.current?.el;
     const listener = ({ detail }: any) => {
       const { tabEl: tabEle, originIndex, destinationIndex } = detail;
       const tabId = tabEle.getAttribute("data-tab-id") as string;
-      listeners.onTabReorder?.(tabId, originIndex, destinationIndex);
+      listenersLest.current.onTabReorder?.(tabId, originIndex, destinationIndex);
     };
     ele?.addEventListener("tabReorder", listener);
     return () => {
       ele?.removeEventListener("tabReorder", listener);
     };
-  }, [listeners.onTabReorder]);
+  }, []);
 
   useEffect(() => {
     const ele = chromeTabsRef.current?.el;
     const listener = ({ detail }: any) => {
       const tabEle = detail.tabEl as HTMLDivElement;
       const tabId = tabEle.getAttribute("data-tab-id") as string;
-      listeners.onTabClose?.(tabId);
+      listenersLest.current.onTabClose?.(tabId);
     };
     ele?.addEventListener("tabClose", listener);
     return () => {
       ele?.removeEventListener("tabClose", listener);
     };
-  }, [listeners.onTabClose]);
+  }, []);
 
   useEffect(() => {
     const listener = () => {
-      listeners.onDragBegin?.();
+      listenersLest.current.onDragBegin?.();
     };
     const ele = chromeTabsRef.current?.el;
     ele?.addEventListener("dragBegin", listener);
     return () => {
       ele?.removeEventListener("dragBegin", listener);
     };
-  }, [listeners.onDragBegin]);
+  }, []);
 
   useEffect(() => {
     const ele = chromeTabsRef.current?.el;
@@ -109,24 +112,24 @@ export function useChromeTabs(listeners: Listeners) {
         return;
       }
       const tabId = tabEle.getAttribute("data-tab-id") as string;
-      listeners.onContextMenu?.(tabId, detail.event);
+      listenersLest.current.onContextMenu?.(tabId, detail.event);
     };
     ele?.addEventListener("contextmenu", listener);
     return () => {
       ele?.removeEventListener("contextmenu", listener);
     };
-  }, [listeners.onContextMenu]);
+  }, []);
 
   useEffect(() => {
     const listener = () => {
-      listeners.onDragEnd?.();
+      listenersLest.current.onDragEnd?.();
     };
     const ele = chromeTabsRef.current?.el;
     ele?.addEventListener("dragEnd", listener);
     return () => {
       ele?.removeEventListener("dragEnd", listener);
     };
-  }, [listeners.onDragEnd]);
+  }, []);
 
   const addTab = useCallback((tab: TabProperties) => {
     chromeTabsRef.current?.addTab(tab);
@@ -161,6 +164,18 @@ export function useChromeTabs(listeners: Listeners) {
     }
   }, []);
 
+  const updateTabByIndex = useCallback((index: number, tab: TabProperties) => {
+    const tabs = ref.current?.querySelectorAll('.chrome-tab');
+    if (tabs) {
+      const ele = tabs.item(index) as HTMLDivElement;
+      if (ele) {
+        chromeTabsRef.current?.updateTab(ele, { ...tab });
+      } else {
+        chromeTabsRef.current?.addTab(tab);
+      }
+    }
+  }, [])
+
   const ChromeTabs = useCallback(function ChromeTabs(props: { className?: string, darkMode?: boolean}) {
     return <ChromeTabsWrapper {...props} ref={ref} />;
   }, []);
@@ -171,5 +186,6 @@ export function useChromeTabs(listeners: Listeners) {
     updateTab,
     removeTab,
     activeTab,
+    updateTabByIndex,
   };
 }

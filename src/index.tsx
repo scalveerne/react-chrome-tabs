@@ -1,2 +1,2 @@
-export { useChromeTabs } from "./hooks";
+export { useChromeTabs } from "./hooks/useChromeTabs";
 export * from "./component";
