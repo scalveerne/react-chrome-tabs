@@ -10,6 +10,7 @@ export type TabsProps = Listeners & {
   tabs: TabProperties[];
   className?: string;
   darkMode?: boolean;
+  pinnedRight?: React.ReactNode;
 };
 
 export function Tabs({
@@ -20,6 +21,7 @@ export function Tabs({
   onTabClose: onTabClose,
   onTabReorder,
   onContextMenu,
+  pinnedRight: toolbar,
 }: TabsProps) {
   const tabsLatest = useLatest(tabs);
   const previousTabs = usePrevious(tabs);
@@ -85,5 +87,7 @@ export function Tabs({
       });
     }
   }, [tabs]);
-  return <ChromeTabs className={className} darkMode={darkMode} />;
+  return (
+    <ChromeTabs className={className} darkMode={darkMode} toolbar={toolbar} />
+  );
 }

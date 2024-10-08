@@ -15,13 +15,16 @@ export type Listeners = {
   onTabReorder?: (tabId: string, fromIdex: number, toIndex: number) => void;
   onDragBegin?: () => void;
   onDragEnd?: () => void;
-  onContextMenu?:(tabId: string, event: MouseEvent) => void;
+  onContextMenu?: (tabId: string, event: MouseEvent) => void;
 };
 
-const ChromeTabsWrapper = forwardRef<HTMLDivElement, { className?: string, darkMode?: boolean}>((props, ref) => {
-  const classList = ['chrome-tabs'];
+const ChromeTabsWrapper = forwardRef<
+  HTMLDivElement,
+  { className?: string; darkMode?: boolean; toolbar?: React.ReactNode }
+>((props, ref) => {
+  const classList = ["chrome-tabs"];
   if (props.darkMode) {
-    classList.push('chrome-tabs-dark-theme');
+    classList.push("chrome-tabs-dark-theme");
   }
   if (props.className) {
     classList.push(props.className);
@@ -29,10 +32,15 @@ const ChromeTabsWrapper = forwardRef<HTMLDivElement, { className?: string, darkM
   return (
     <div
       ref={ref}
-      className={classList.join(' ')}
-      style={{ "--tab-content-margin": "9px" } as CSSProperties}
+      className={classList.join(" ")}
+      style={
+        { "--tab-content-margin": "9px", display: "flex" } as CSSProperties
+      }
     >
       <div className="chrome-tabs-content"></div>
+      <div className="chrome-tabs-toolbar-right">
+        <div>{props.toolbar || null}</div>
+      </div>
       <div className="chrome-tabs-bottom-bar"></div>
     </div>
   );
@@ -41,7 +49,7 @@ const ChromeTabsWrapper = forwardRef<HTMLDivElement, { className?: string, darkM
 export function useChromeTabs(listeners: Listeners) {
   const ref = useRef<HTMLDivElement>(null);
   const chromeTabsRef = useRef<ChromeTabsClz | null>(null);
-  
+
   const listenersLest = useLatest(listeners);
 
   useEffect(() => {
@@ -50,7 +58,7 @@ export function useChromeTabs(listeners: Listeners) {
     chromeTabs.init(ref.current as HTMLDivElement);
     return () => {
       chromeTabs.destroy();
-    }
+    };
   }, []);
 
   // activated
@@ -72,7 +80,11 @@ export function useChromeTabs(listeners: Listeners) {
     const listener = ({ detail }: any) => {
       const { tabEl: tabEle, originIndex, destinationIndex } = detail;
       const tabId = tabEle.getAttribute("data-tab-id") as string;
-      listenersLest.current.onTabReorder?.(tabId, originIndex, destinationIndex);
+      listenersLest.current.onTabReorder?.(
+        tabId,
+        originIndex,
+        destinationIndex
+      );
     };
     ele?.addEventListener("tabReorder", listener);
     return () => {
@@ -165,7 +177,7 @@ export function useChromeTabs(listeners: Listeners) {
   }, []);
 
   const updateTabByIndex = useCallback((index: number, tab: TabProperties) => {
-    const tabs = ref.current?.querySelectorAll('.chrome-tab');
+    const tabs = ref.current?.querySelectorAll(".chrome-tab");
     if (tabs) {
       const ele = tabs.item(index) as HTMLDivElement;
       if (ele) {
@@ -174,11 +186,16 @@ export function useChromeTabs(listeners: Listeners) {
         chromeTabsRef.current?.addTab(tab);
       }
     }
-  }, [])
-
-  const ChromeTabs = useCallback(function ChromeTabs(props: { className?: string, darkMode?: boolean}) {
-    return <ChromeTabsWrapper {...props} ref={ref} />;
   }, []);
+
+  const ChromeTabs = useCallback(function ChromeTabs(props: {
+    className?: string;
+    darkMode?: boolean;
+    toolbar?: React.ReactNode;
+  }) {
+    return <ChromeTabsWrapper {...props} ref={ref} />;
+  },
+  []);
 
   return {
     ChromeTabs,

@@ -83,6 +83,7 @@ function App() {
         onTabReorder={reorder}
         onTabActive={active}
         tabs={tabs}
+        pinnedRight={<button onClick={addTabWithIcon}>+</button>}
       ></Tabs>
       <button onClick={addTab}>Add Tab</button>
       <button onClick={closeAll}>Close All</button>

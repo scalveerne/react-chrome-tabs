@@ -21,11 +21,12 @@ function App() {
   const addTabWithIcon = () => {
     id++;
     setTabs([
-      ...tabs,
+      ...tabs.map((i) => ({ ...i, active: false })),
       {
         id: `tab-id-${id}`,
         title: `New Tabs ${id}`,
         favicon: tabs.length % 2 ? fb : google,
+        active: true,
       },
     ]);
   };
@@ -33,11 +34,12 @@ function App() {
   const addTabWithIconClass = () => {
     id++;
     setTabs([
-      ...tabs,
+      ...tabs.map((i) => ({ ...i, active: false })),
       {
         id: `tab-id-${id}`,
         title: `New Tabs ${id}`,
         faviconClass: " emoji",
+        active: true,
       },
     ]);
   };
@@ -64,7 +66,7 @@ function App() {
   const closeAll = () => setTabs([]);
 
   const toggleDarkMode = () => {
-    setDarkMode(darkMode => !darkMode)
+    setDarkMode((darkMode) => !darkMode);
   };
 
   return (
@@ -75,6 +77,7 @@ function App() {
         onTabReorder={reorder}
         onTabActive={active}
         tabs={tabs}
+        pinnedRight={<button onClick={addTabWithIcon}>+</button>}
       ></Tabs>
       <button onClick={addTabWithIcon}>Add Tab with icon</button>
       <button onClick={addTabWithIconClass}>Add Tab with iconClass</button>

@@ -1,4 +1,5 @@
 import Draggabilly from "draggabilly";
+import { sum } from "./utils/math";
 
 const TAB_CONTENT_MARGIN = 9;
 const TAB_CONTENT_OVERLAP_DISTANCE = 1;
@@ -6,7 +7,7 @@ const TAB_CONTENT_OVERLAP_DISTANCE = 1;
 const TAB_OVERLAP_DISTANCE =
   TAB_CONTENT_MARGIN * 2 + TAB_CONTENT_OVERLAP_DISTANCE;
 
-const TAB_CONTENT_MIN_WIDTH = 24;
+const TAB_CONTENT_MIN_WIDTH = 60;
 const TAB_CONTENT_MAX_WIDTH = 240;
 
 const TAB_SIZE_SMALL = 84;
@@ -67,7 +68,7 @@ class ChromeTabs {
   isDragging: any;
   draggabillyDragging: any;
   isMouseEnter: boolean = false;
-  mouseEnterLayoutResolve: null | (() => void) = null
+  mouseEnterLayoutResolve: null | (() => void) = null;
 
   constructor() {
     this.draggabillies = [];
@@ -111,39 +112,44 @@ class ChromeTabs {
     //     this.addTab();
     // });
 
-    this.el.addEventListener('mouseenter', () => {
+    this.el.addEventListener("mouseenter", () => {
       this.isMouseEnter = true;
     });
 
-    this.el.addEventListener('mouseleave', this.onMouseLeave);
+    this.el.addEventListener("mouseleave", this.onMouseLeave);
     // When the page visibility status changes, it is triggered immediately
-    document.addEventListener('visibilitychange', this.onMouseLeave);
+    document.addEventListener("visibilitychange", this.onMouseLeave);
 
     this.tabEls.forEach((tabEl) => this.setTabCloseEventListener(tabEl));
   }
   onResize = () => {
     this.cleanUpPreviouslyDraggedTabs();
     this.layoutTabs();
-  }
+  };
   onMouseLeave = () => {
     this.isMouseEnter = false;
     if (this.mouseEnterLayoutResolve) {
       this.mouseEnterLayoutResolve();
       this.mouseEnterLayoutResolve = null;
     }
-  }
+  };
 
   get tabEls() {
     return Array.prototype.slice.call(this.el.querySelectorAll(".chrome-tab"));
   }
 
   get tabContentEl() {
-    return this.el.querySelector(".chrome-tabs-content")!;
+    return this.el.querySelector(".chrome-tabs-content")! as HTMLDivElement;
+  }
+
+  get toolbarEl() {
+    return this.el.querySelector(".chrome-tabs-toolbar-right")!;
   }
 
   get tabContentWidths() {
     const numberOfTabs = this.tabEls.length;
-    const tabsContentWidth = this.tabContentEl!.clientWidth;
+    const tabsContentWidth =
+      this.el!.clientWidth - this.toolbarEl.clientWidth - 16;
     const tabsCumulativeOverlappedWidth =
       (numberOfTabs - 1) * TAB_CONTENT_OVERLAP_DISTANCE;
     const targetWidth =
@@ -230,6 +236,23 @@ class ChromeTabs {
           `;
     });
     this.styleEl.innerHTML = styleHTML;
+    this.justifyContentWidth();
+  }
+
+  justifyContentWidth() {
+    requestAnimationFrame(() => {
+      const contentWidths = this.tabEls.map(
+        (tabEl) =>
+          tabEl.querySelector(".chrome-tab-drag-handle").getBoundingClientRect()
+            .width
+      );
+      const width = sum(...contentWidths);
+      const contentWith =
+        width +
+        8 -
+        Math.max(contentWidths.length - 1, 0) * TAB_CONTENT_OVERLAP_DISTANCE;
+      this.tabContentEl.style.width = contentWith + "px";
+    });
   }
 
   createNewTabEl() {
@@ -302,10 +325,11 @@ class ChromeTabs {
     this.emit("tabRemove", { tabEl });
     this.cleanUpPreviouslyDraggedTabs();
     if (this.isMouseEnter) {
+      this.justifyContentWidth();
       if (!this.mouseEnterLayoutResolve) {
         new Promise<void>((resolve) => {
           this.mouseEnterLayoutResolve = resolve;
-        }).then(() => this.layoutTabs())
+        }).then(() => this.layoutTabs());
       }
     } else {
       this.layoutTabs();
@@ -451,8 +475,8 @@ class ChromeTabs {
   }
 
   destroy() {
-    window.removeEventListener('resize',this.onResize);
-    document.removeEventListener('visibilitychange', this.onMouseLeave)
+    window.removeEventListener("resize", this.onResize);
+    document.removeEventListener("visibilitychange", this.onMouseLeave);
   }
 }
 
