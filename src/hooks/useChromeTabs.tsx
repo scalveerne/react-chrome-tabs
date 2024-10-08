@@ -38,7 +38,7 @@ const ChromeTabsWrapper = forwardRef<
       }
     >
       <div className="chrome-tabs-content"></div>
-      <div className="chrome-tabs-toolbar-right">
+      <div className="chrome-tabs-toolbar-right" style={{ zIndex: 1 }}>
         <div>{props.toolbar || null}</div>
       </div>
       <div className="chrome-tabs-bottom-bar"></div>

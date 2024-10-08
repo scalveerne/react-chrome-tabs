@@ -1,5 +1,5 @@
 import Draggabilly from "draggabilly";
-import { sum } from "./utils/math";
+import { inRange, sum } from "./utils/util";
 
 const TAB_CONTENT_MARGIN = 9;
 const TAB_CONTENT_OVERLAP_DISTANCE = 1;
@@ -57,6 +57,7 @@ export interface TabProperties {
   favicon?: boolean | string;
   faviconClass?: string;
 }
+inRange;
 
 let instanceId = 0;
 
@@ -104,6 +105,7 @@ class ChromeTabs {
     this.el.appendChild(this.styleEl);
   }
 
+  translateX = 0;
   setupEvents() {
     window.addEventListener("resize", this.onResize);
 
@@ -121,7 +123,25 @@ class ChromeTabs {
     document.addEventListener("visibilitychange", this.onMouseLeave);
 
     this.tabEls.forEach((tabEl) => this.setTabCloseEventListener(tabEl));
+    this.tabContentEl.addEventListener("wheel", (event) => {
+      const tabsWidth = this.getTabsWidth();
+      const clientWidth = this.tabContentEl.clientWidth;
+      if (clientWidth >= tabsWidth) {
+        this.translateX = 0;
+      } else {
+        const sign = event.deltaY > 0 ? 1 : -1;
+        const delta = (sign * (tabsWidth - clientWidth)) / 3;
+        this.translateX = Math.min(
+          0,
+          Math.max(this.translateX - delta, clientWidth - tabsWidth)
+        );
+      }
+      this.tabContentEl.style.transform = `translateX(${this.translateX}px)`;
+    });
   }
+
+  translate() {}
+
   onResize = () => {
     this.cleanUpPreviouslyDraggedTabs();
     this.layoutTabs();
@@ -239,20 +259,43 @@ class ChromeTabs {
     this.justifyContentWidth();
   }
 
+  getTabsWidth() {
+    const contentWidths = this.tabEls.map(
+      (tabEl) =>
+        tabEl.querySelector(".chrome-tab-drag-handle").getBoundingClientRect()
+          .width
+    );
+    const width = sum(...contentWidths);
+    const contentWith =
+      width +
+      8 -
+      Math.max(contentWidths.length - 1, 0) * TAB_CONTENT_OVERLAP_DISTANCE;
+    return contentWith;
+  }
+
   justifyContentWidth() {
     requestAnimationFrame(() => {
-      const contentWidths = this.tabEls.map(
-        (tabEl) =>
-          tabEl.querySelector(".chrome-tab-drag-handle").getBoundingClientRect()
-            .width
-      );
-      const width = sum(...contentWidths);
-      const contentWith =
-        width +
-        8 -
-        Math.max(contentWidths.length - 1, 0) * TAB_CONTENT_OVERLAP_DISTANCE;
-      this.tabContentEl.style.width = contentWith + "px";
+      this.tabContentEl.style.width = this.getTabsWidth() + "px";
+      requestAnimationFrame(() => this.translateToView());
     });
+  }
+
+  translateToView() {
+    const tabsWidth = this.getTabsWidth();
+    const tabWidth = tabsWidth / this.tabEls.length;
+    const clientWidth = this.tabContentEl.clientWidth;
+    const index = this.tabEls.indexOf(this.activeTabEl);
+    if (index === -1) return;
+    if (clientWidth >= tabsWidth) {
+      this.translateX = 0;
+    } else {
+      const currentX = index * tabWidth;
+      const left = Math.max(-currentX, clientWidth - tabsWidth);
+      const right = Math.max(-currentX + tabWidth, clientWidth - tabsWidth);
+      const isInRange = inRange(this.translateX, left, right);
+      this.translateX = Math.min(0, isInRange ? this.translateX : left);
+    }
+    this.tabContentEl.style.transform = `translateX(${this.translateX}px)`;
   }
 
   createNewTabEl() {
