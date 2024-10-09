@@ -266,6 +266,7 @@ class ChromeTabs {
   layoutPromise = null as Promise<void> | null;
   layoutTabs() {
     this.layoutPromise = this.doLayout();
+    return this.layoutPromise;
   }
 
   getTabsWidth() {
@@ -383,10 +384,12 @@ class ChromeTabs {
       if (!this.mouseEnterLayoutResolve) {
         new Promise<void>((resolve) => {
           this.mouseEnterLayoutResolve = resolve;
-        }).then(() => this.layoutTabs());
+        })
+          .then(() => this.layoutTabs())
+          .then(() => this.translateToView());
       }
     } else {
-      this.layoutTabs();
+      this.layoutTabs().then(() => this.translateToView());
     }
     this.setupDraggabilly();
   }
