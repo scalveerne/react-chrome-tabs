@@ -11,3 +11,7 @@ export function requestAnimationFrameAsync() {
     requestAnimationFrame(resolve);
   });
 }
+
+export function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}

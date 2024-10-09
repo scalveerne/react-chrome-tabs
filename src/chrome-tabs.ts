@@ -287,7 +287,8 @@ class ChromeTabs {
     this.tabContentEl.style.width = this.getTabsWidth() + "px";
   }
 
-  translateToView() {
+  async translateToView() {
+    await requestAnimationFrameAsync();
     const tabsWidth = this.getTabsWidth();
     const tabWidth = tabsWidth / this.tabEls.length;
     const clientWidth = this.tabContentEl.clientWidth;
