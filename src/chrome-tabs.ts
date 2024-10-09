@@ -1,5 +1,5 @@
 import Draggabilly from "draggabilly";
-import { inRange, sum } from "./utils/util";
+import { inRange, requestAnimationFrameAsync, sum } from "./utils/util";
 
 const TAB_CONTENT_MARGIN = 9;
 const TAB_CONTENT_OVERLAP_DISTANCE = 1;
@@ -138,14 +138,17 @@ class ChromeTabs {
       }
       this.tabContentEl.style.transform = `translateX(${this.translateX}px)`;
     });
+    this.el.addEventListener("activeTabChange", async (event) => {
+      await this.layoutPromise; // Wait for the layout to finish
+      this.translateToView();
+    });
   }
-
-  translate() {}
 
   onResize = () => {
     this.cleanUpPreviouslyDraggedTabs();
     this.layoutTabs();
   };
+
   onMouseLeave = () => {
     this.isMouseEnter = false;
     if (this.mouseEnterLayoutResolve) {
@@ -229,7 +232,7 @@ class ChromeTabs {
     return positions;
   }
 
-  layoutTabs() {
+  async doLayout() {
     const tabContentWidths = this.tabContentWidths;
     this.tabEls.forEach((tabEl, i) => {
       const contentWidth = tabContentWidths[i];
@@ -246,17 +249,23 @@ class ChromeTabs {
     });
 
     let styleHTML = "";
+
     this.tabPositions.forEach((position, i) => {
       styleHTML += `
-            .chrome-tabs[data-chrome-tabs-instance-id="${
-              this.instanceId
-            }"] .chrome-tab:nth-child(${i + 1}) {
-              transform: translate3d(${position}px, 0, 0)
-            }
-          `;
+              .chrome-tabs[data-chrome-tabs-instance-id="${
+                this.instanceId
+              }"] .chrome-tab:nth-child(${i + 1}) {
+                transform: translate3d(${position}px, 0, 0)
+              }
+            `;
     });
     this.styleEl.innerHTML = styleHTML;
-    this.justifyContentWidth();
+    await this.justifyContentWidth();
+  }
+
+  layoutPromise = null as Promise<void> | null;
+  layoutTabs() {
+    this.layoutPromise = this.doLayout();
   }
 
   getTabsWidth() {
@@ -273,11 +282,9 @@ class ChromeTabs {
     return contentWith;
   }
 
-  justifyContentWidth() {
-    requestAnimationFrame(() => {
-      this.tabContentEl.style.width = this.getTabsWidth() + "px";
-      requestAnimationFrame(() => this.translateToView());
-    });
+  async justifyContentWidth() {
+    await requestAnimationFrameAsync();
+    this.tabContentEl.style.width = this.getTabsWidth() + "px";
   }
 
   translateToView() {
@@ -293,7 +300,10 @@ class ChromeTabs {
       const left = Math.max(-currentX, clientWidth - tabsWidth);
       const right = Math.max(-currentX + tabWidth, clientWidth - tabsWidth);
       const isInRange = inRange(this.translateX, left, right);
-      this.translateX = Math.min(0, isInRange ? this.translateX : left);
+      this.translateX = Math.min(
+        0,
+        isInRange ? this.translateX : (left + right) / 2
+      );
     }
     this.tabContentEl.style.transform = `translateX(${this.translateX}px)`;
   }
@@ -436,7 +446,7 @@ class ChromeTabs {
       const draggabilly = new Draggabilly(tabEl, {
         axis: "x",
         handle: ".chrome-tab-drag-handle",
-        containment: this.tabContentEl,
+        containment: false,
       });
 
       this.draggabillies.push(draggabilly);
@@ -473,7 +483,6 @@ class ChromeTabs {
 
             requestAnimationFrame((_) => {
               tabEl.style.transform = "";
-
               this.layoutTabs();
               this.setupDraggabilly();
             });
@@ -495,7 +504,6 @@ class ChromeTabs {
           0,
           Math.min(tabEls.length, destinationIndexTarget)
         );
-
         if (currentIndex !== destinationIndex) {
           this.animateTabMove(tabEl, currentIndex, destinationIndex);
         }
@@ -508,6 +516,7 @@ class ChromeTabs {
     originIndex: number,
     destinationIndex: number
   ) {
+    // tabEl.style.transform = `translate3d(${-this.translateX}px, 0, 0)`;
     if (destinationIndex < originIndex) {
       tabEl!.parentNode!.insertBefore(tabEl, this.tabEls[destinationIndex]);
     } else {

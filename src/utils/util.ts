@@ -5,3 +5,9 @@ export function sum(...args: number[]) {
 export function inRange(value: number, start: number, end: number) {
   return value >= start && value <= end;
 }
+
+export function requestAnimationFrameAsync() {
+  return new Promise((resolve) => {
+    requestAnimationFrame(resolve);
+  });
+}
