@@ -56,6 +56,7 @@ export interface TabProperties {
   active?: boolean;
   favicon?: boolean | string;
   faviconClass?: string;
+  isCloseIconVisible?: boolean;
 }
 inRange;
 
@@ -333,6 +334,12 @@ class ChromeTabs {
     }
 
     tabProperties = Object.assign({}, defaultTapProperties, tabProperties);
+    const showCloseButton = tabProperties.isCloseIconVisible !== false;
+    if (!showCloseButton) {
+      tabEl.classList.add("chrome-tab-no-close");
+    } else {
+      tabEl.classList.remove("chrome-tab-no-close");
+    }
     this.tabContentEl.appendChild(tabEl);
     this.setTabCloseEventListener(tabEl);
     this.updateTab(tabEl, tabProperties);

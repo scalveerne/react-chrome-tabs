@@ -120,6 +120,8 @@ export interface TabProperties {
   favicon?: boolean | string;
   // favicon class
   faviconClass?: string;
+  // default true
+  isCloseIconVisible?: boolean;
 }
 ```
 

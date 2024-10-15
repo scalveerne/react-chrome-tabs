@@ -44,6 +44,20 @@ function App() {
     ]);
   };
 
+  const addTabWithoutClose = () => {
+    id++;
+    setTabs([
+      ...tabs.map((i) => ({ ...i, active: false })),
+      {
+        id: `tab-id-${id}`,
+        title: `New Tabs ${id}`,
+        faviconClass: " emoji",
+        isCloseIconVisible: false,
+        active: true,
+      },
+    ]);
+  };
+
   const active = (id: string) => {
     setTabs(tabs.map((tab) => ({ ...tab, active: id === tab.id })));
   };
@@ -81,6 +95,7 @@ function App() {
       ></Tabs>
       <button onClick={addTabWithIcon}>Add Tab with icon</button>
       <button onClick={addTabWithIconClass}>Add Tab with iconClass</button>
+      <button onClick={addTabWithoutClose}>Add Tab without close icon</button>
       <button onClick={closeAll}>Close All</button>
       <button onClick={toggleDarkMode}>Dark Mode</button>
     </div>
