@@ -73,7 +73,6 @@ function App() {
     }
     let newTabs = tabs.filter((tab) => tab.id !== tabId);
     newTabs.splice(toIndex, 0, beforeTab);
-    console.log(newTabs);
     setTabs(newTabs);
   };
 

@@ -452,7 +452,7 @@ class ChromeTabs {
 
     this.draggabillies.forEach((d) => d.destroy());
 
-    tabEls.forEach((tabEl, originalIndex) => {
+    tabEls.forEach((tabEl: HTMLDivElement, originalIndex) => {
       const originalTabPositionX = tabPositions[originalIndex];
       const draggabilly = new Draggabilly(tabEl, {
         axis: "x",
@@ -500,13 +500,35 @@ class ChromeTabs {
           });
         });
       });
-
-      draggabilly.on("dragMove", (event, pointer, moveVector) => {
+      const handleDragMove = (event: any, pointer: any, moveVector: any) => {
         // Current index be computed within the event since it can change during the dragMove
         const tabEls = this.tabEls;
         const currentIndex = tabEls.indexOf(tabEl);
-
         const currentTabPositionX = originalTabPositionX + moveVector.x;
+        const tabContent = tabEl.querySelector(".chrome-tab-content")!;
+        const right = currentTabPositionX + tabContent.clientWidth;
+
+        const overLeft = currentTabPositionX < -2;
+        const overRight = right > this.tabContentEl.clientWidth;
+        // trick to prevent the tab from being dragged out of the tab bar
+        // @see https://github.com/desandro/draggabilly/issues/177#issuecomment-357270225
+        if (overLeft || overRight) {
+          draggabilly.off("dragMove", handleDragMove);
+          let x: number;
+          if (overLeft) {
+            x = -originalTabPositionX;
+          } else {
+            const delta = right - this.tabContentEl.clientWidth;
+            x = moveVector.x - delta;
+          }
+          (draggabilly as any)._dragMove(event as any, pointer, {
+            x: x,
+            y: 0,
+          });
+
+          draggabilly.on("dragMove", handleDragMove);
+          return;
+        }
         const destinationIndexTarget = closest(
           currentTabPositionX,
           tabPositions
@@ -518,7 +540,9 @@ class ChromeTabs {
         if (currentIndex !== destinationIndex) {
           this.animateTabMove(tabEl, currentIndex, destinationIndex);
         }
-      });
+      };
+
+      draggabilly.on("dragMove", handleDragMove);
     });
   }
 
