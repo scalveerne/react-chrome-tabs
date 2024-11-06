@@ -15,3 +15,7 @@ export function requestAnimationFrameAsync() {
 export function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
+
+export function inBrowser() {
+  return typeof window !== "undefined";
+}

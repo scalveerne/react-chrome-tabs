@@ -1,5 +1,10 @@
 import Draggabilly from "draggabilly";
-import { inRange, requestAnimationFrameAsync, sum } from "./utils/util";
+import {
+  inBrowser,
+  inRange,
+  requestAnimationFrameAsync,
+  sum,
+} from "./utils/util";
 
 const TAB_CONTENT_MARGIN = 9;
 const TAB_CONTENT_OVERLAP_DISTANCE = 1;
@@ -108,7 +113,9 @@ class ChromeTabs {
 
   translateX = 0;
   setupEvents() {
-    window.addEventListener("resize", this.onResize);
+    if (inBrowser()) {
+      window.addEventListener("resize", this.onResize);
+    }
 
     // this.el.addEventListener("dblclick", (event) => {
     //   if ([this.el, this.tabContentEl].includes(event.target as HTMLElement))
@@ -562,7 +569,9 @@ class ChromeTabs {
   }
 
   destroy() {
-    window.removeEventListener("resize", this.onResize);
+    if (inBrowser()) {
+      window.removeEventListener("resize", this.onResize);
+    }
     document.removeEventListener("visibilitychange", this.onMouseLeave);
   }
 }
