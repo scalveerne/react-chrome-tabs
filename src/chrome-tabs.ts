@@ -525,7 +525,8 @@ class ChromeTabs {
           if (overLeft) {
             x = -originalTabPositionX;
           } else {
-            const delta = right - this.tabContentEl.clientWidth;
+            const RADIUS = 8;
+            const delta = right - this.tabContentEl.clientWidth + RADIUS;
             x = moveVector.x - delta;
           }
           (draggabilly as any)._dragMove(event as any, pointer, {
