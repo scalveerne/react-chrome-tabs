@@ -19,7 +19,7 @@
   const TAB_SIZE_SMALLER = 60
   const TAB_SIZE_MINI = 48
 
-  const noop = _ => {}
+  const noop = _ => { }
 
   const closest = (value, array) => {
     let closest = Infinity
@@ -39,7 +39,27 @@
     <div class="chrome-tab">
       <div class="chrome-tab-dividers"></div>
       <div class="chrome-tab-background">
-        <svg version="1.1" xmlns="http://www.w3.org/2000/svg"><defs><symbol id="chrome-tab-geometry-left" viewBox="0 0 214 36"><path d="M17 0h197v36H0v-2c4.5 0 9-3.5 9-8V8c0-4.5 3.5-8 8-8z"/></symbol><symbol id="chrome-tab-geometry-right" viewBox="0 0 214 36"><use xlink:href="#chrome-tab-geometry-left"/></symbol><clipPath id="crop"><rect class="mask" width="100%" height="100%" x="0"/></clipPath></defs><svg width="52%" height="100%"><use xlink:href="#chrome-tab-geometry-left" width="214" height="36" class="chrome-tab-geometry"/></svg><g transform="scale(-1, 1)"><svg width="52%" height="100%" x="-100%" y="0"><use xlink:href="#chrome-tab-geometry-right" width="214" height="36" class="chrome-tab-geometry"/></svg></g></svg>
+        <svg version="1.1" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <symbol id="chrome-tab-geometry-left" viewBox="0 0 214 36">
+      <path d="M17 0h197v36H0v-2c4.5 0 9-3.5 9-8V8c0-4.5 3.5-8 8-8z"></path>
+    </symbol>
+    <symbol id="chrome-tab-geometry-right" viewBox="0 0 214 36">
+      <use xlink:href="#chrome-tab-geometry-left"></use>
+    </symbol>
+    <clipPath id="crop">
+      <rect class="mask" width="100%" height="100%" x="0"></rect>
+    </clipPath>
+  </defs>
+  <svg width="52%" height="100%">
+    <use xlink:href="#chrome-tab-geometry-left" width="214" height="36" class="chrome-tab-geometry" fill="none" stroke="#3D3241" stroke-width="1"></use>
+  </svg>
+  <g transform="scale(-1, 1)">
+    <svg width="52%" height="100%" x="-100%" y="0">
+      <use xlink:href="#chrome-tab-geometry-right" width="214" height="36" class="chrome-tab-geometry" fill="none" stroke="#3D3241" stroke-width="1"></use>
+    </svg>
+  </g>
+</svg>
       </div>
       <div class="chrome-tab-content">
         <div class="chrome-tab-favicon"></div>
@@ -81,7 +101,7 @@
     }
 
     setupCustomProperties() {
-      this.el.style.setProperty('--tab-content-margin', `${ TAB_CONTENT_MARGIN }px`)
+      this.el.style.setProperty('--tab-content-margin', `${TAB_CONTENT_MARGIN}px`)
     }
 
     setupStyleEl() {
@@ -176,8 +196,8 @@
       let styleHTML = ''
       this.tabPositions.forEach((position, i) => {
         styleHTML += `
-          .chrome-tabs[data-chrome-tabs-instance-id="${ this.instanceId }"] .chrome-tab:nth-child(${ i + 1 }) {
-            transform: translate3d(${ position }px, 0, 0)
+          .chrome-tabs[data-chrome-tabs-instance-id="${this.instanceId}"] .chrome-tab:nth-child(${i + 1}) {
+            transform: translate3d(${position}px, 0, 0)
           }
         `
       })
@@ -249,7 +269,7 @@
 
       const faviconEl = tabEl.querySelector('.chrome-tab-favicon')
       if (tabProperties.favicon) {
-        faviconEl.style.backgroundImage = `url('${ tabProperties.favicon }')`
+        faviconEl.style.backgroundImage = `url('${tabProperties.favicon}')`
         faviconEl.removeAttribute('hidden', '')
       } else {
         faviconEl.setAttribute('hidden', '')
@@ -312,7 +332,7 @@
           // Animate dragged tab back into its place
           requestAnimationFrame(_ => {
             tabEl.style.left = '0'
-            tabEl.style.transform = `translate3d(${ finalTranslateX }px, 0, 0)`
+            tabEl.style.transform = `translate3d(${finalTranslateX}px, 0, 0)`
 
             requestAnimationFrame(_ => {
               tabEl.classList.remove('chrome-tab-is-dragging')
