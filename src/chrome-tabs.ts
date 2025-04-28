@@ -7,13 +7,13 @@ import {
 } from "./utils/util";
 
 const TAB_CONTENT_MARGIN = 9;
-const TAB_CONTENT_OVERLAP_DISTANCE = 1;
+const TAB_CONTENT_OVERLAP_DISTANCE = 2;
 
 const TAB_OVERLAP_DISTANCE =
   TAB_CONTENT_MARGIN * 2 + TAB_CONTENT_OVERLAP_DISTANCE;
 
 const TAB_CONTENT_MIN_WIDTH = 60;
-const TAB_CONTENT_MAX_WIDTH = 240;
+const TAB_CONTENT_MAX_WIDTH = 260;
 
 const TAB_SIZE_SMALL = 84;
 const TAB_SIZE_SMALLER = 60;
@@ -274,7 +274,7 @@ class ChromeTabs {
     const tabContentWidths = this.tabContentWidths;
     this.tabEls.forEach((tabEl, i) => {
       const contentWidth = tabContentWidths[i];
-      const width = contentWidth + 2 * TAB_CONTENT_MARGIN;
+      const width = (contentWidth + 2 * TAB_CONTENT_MARGIN) * 1.1;
 
       tabEl.style.width = width + "px";
       tabEl.removeAttribute("is-small");
