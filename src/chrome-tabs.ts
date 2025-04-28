@@ -314,15 +314,18 @@ class ChromeTabs {
     );
     const width = sum(...contentWidths);
     const contentWith =
-      width +
-      8 -
-      Math.max(contentWidths.length - 1, 0) * TAB_CONTENT_OVERLAP_DISTANCE;
+      (width +
+        8 -
+        Math.max(contentWidths.length - 1, 0) * TAB_CONTENT_OVERLAP_DISTANCE) * 1.1;
     return contentWith;
   }
 
   async justifyContentWidth() {
     await requestAnimationFrameAsync();
-    this.tabContentEl.style.width = this.getTabsWidth() + "px";
+    this.tabContentEl.style.width = "fit-content";
+    if (getComputedStyle(this.tabContentEl).width === "auto" || getComputedStyle(this.tabContentEl).width === "0px") {
+      this.tabContentEl.style.width = this.getTabsWidth() + "px";
+    }
   }
 
   async translateToView() {
