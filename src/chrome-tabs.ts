@@ -316,7 +316,7 @@ class ChromeTabs {
     const contentWith =
       (width +
         8 -
-        Math.max(contentWidths.length - 1, 0) * TAB_CONTENT_OVERLAP_DISTANCE) * 1.1;
+        Math.max(contentWidths.length - 1, 0) * TAB_CONTENT_OVERLAP_DISTANCE) * 1.2;
     return contentWith;
   }
 
